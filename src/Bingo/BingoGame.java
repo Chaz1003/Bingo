@@ -9,13 +9,14 @@ public class BingoGame implements Runnable{
     List<BingoCard> cards;
     static boolean bingo;
     static boolean[] result;
-    boolean [] isChosen = new boolean[75];
+    //boolean [] result = new boolean[75];
     int [] sequence = new int[75];
 
     @Override
     public void run() {
         System.out.print("How many players? ");
         Scanner sc = new Scanner(System.in);
+         result = new boolean[75];
         int count = sc.nextInt();
         cards = new ArrayList<>();
         for (int i = 0; i < count; i++){
@@ -33,31 +34,32 @@ public class BingoGame implements Runnable{
         // 3: CHECKERS
         List<Thread> threads = new ArrayList<>();
         for (BingoCard card : cards) {
-            threads.add(new Thread(new BingoRowChecker(card, 3)));
+            threads.add(new Thread(new BingoRowChecker(card, 1)));
         }
         // 2: RANDOM NUMS
-        isChosen[0] = true;
+        result[0] = true;
         int ctr = 1;
         while (!bingo) {
                 Random rand = new Random();
                 int num;
                 while (true) {
                     num = rand.nextInt(74) + 1;
-                    if (!isChosen[num]) {
+                    if (!result[num]) {
                         sequence[ctr] = num;
                         ctr++;
                         break;
                     }
                 }
-                isChosen[num] = true;
+                result[num] = true;
                 System.out.println("Number drawn: " + num);
                 for (int i = 0; i < ctr; i++) {
                     System.out.print(sequence[i] + " ");
                 }
-
+                System.out.println();
                 synchronized (result) {
                     result.notifyAll();
                 }
+
          /*
             - generate a random number num
             - set the result at index num to TRUE
